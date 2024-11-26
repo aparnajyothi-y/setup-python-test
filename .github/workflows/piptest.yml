@@ -12,13 +12,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up Python 3.x (invalid version)
+    - name: Set up Python 3.x
       uses: actions/setup-python@v5
       with:
-        python-version: '3.x'  # This is the invalid version format.
+        python-version: '3.x' 
         
     - name: Check Python version
-      run: python --version  # This step should fail, as Python setup will not work with "3.x"
-
-
+      run: python --version 
    
