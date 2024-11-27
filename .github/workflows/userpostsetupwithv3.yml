@@ -11,7 +11,7 @@ jobs:
     steps:
       # Step 1: Checkout the repository code
       - name: Check out repository code
-        uses: https://github.com/actions/checkout@v4
+        uses: actions/checkout@v4
 
       # Step 2: Install pnpm
       - name: Install pnpm
