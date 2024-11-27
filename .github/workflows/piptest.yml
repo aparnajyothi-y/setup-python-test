@@ -5,7 +5,8 @@ on:
  workflow_dispatch:
 
 jobs:
-  setup-python:macos-15-large
+  setup-python:
+    runs-on : macos-15-large
 
     steps:
     - name: Checkout code
