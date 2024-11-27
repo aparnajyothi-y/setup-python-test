@@ -17,14 +17,6 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
        
-
-      # Step 3: Set up Node.js and cache pnpm store
-      - name: Setup Node.js and cache pnpm store
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'pnpm'  # This will handle pnpm caching automatically
-
       - name: Verify PNPM Cache Directory
         run: |
           if [ ! -d "/home/runner/setup-pnpm/node_modules/.bin/store/v3" ]; then
@@ -33,6 +25,15 @@ jobs:
           else
             echo "PNPM cache directory exists."
           fi
+          
+      # Step 3: Set up Node.js and cache pnpm store
+      - name: Setup Node.js and cache pnpm store
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'  # This will handle pnpm caching automatically
+
+      
       - name: Check for pnpm-lock.yaml
         run: |
           if [ ! -f "pnpm-lock.yaml" ]; then
