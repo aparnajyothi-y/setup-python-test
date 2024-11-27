@@ -3,59 +3,33 @@ on:
   workflow_dispatch:
 
 env:
-  PNPM_CACHE_FOLDER: .pnpm-store  
+  PNPM_CACHE_FOLDER: .cache/pnpm
 
 jobs:
-  version_or_release:
-    name: 'Version and open PR (or) release private packages'
-    timeout-minutes: 15
+  publish_container:
     runs-on: ubuntu-latest
-    environment: 'Production - Private Packages'
     steps:
-      - name: Checkout code repository
-        uses: actions/checkout@v3
+      # Step 1: Checkout the repository code
+      - name: Check out repository code
+        uses: https://github.com/actions/checkout@v4
+
+      # Step 2: Install pnpm
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
         with:
-          fetch-depth: 0
-      
-      - uses: pnpm/action-setup@v4
-      
-      - name: Create PNPM Cache Directory
-        run: mkdir -p $PNPM_CACHE_FOLDER  # Ensure the cache directory exists
+          version: 9
+          run_install: false
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      # Step 3: Set up Node.js and cache pnpm store
+      - name: Setup Node.js and cache pnpm store
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
-          cache: 'pnpm'  # Use 'pnpm' to enable pnpm caching
+          node-version: '18'
+          cache: 'pnpm'  # This will handle pnpm caching automatically
 
-      - name: Verify PNPM Cache Directory
-        run: |
-          if [ ! -d "$PNPM_CACHE_FOLDER/store/v3" ]; then
-            echo "PNPM cache directory does not exist, creating it."
-            mkdir -p "$PNPM_CACHE_FOLDER/store/v3"
-          else
-            echo "PNPM cache directory exists."
-          fi
-      
-      - name: Check for pnpm-lock.yaml
-        run: |
-          if [ ! -f "pnpm-lock.yaml" ]; then
-            echo "pnpm-lock.yaml file is missing in the repository."
-            exit 1
-          else
-            echo "pnpm-lock.yaml file found."
-          fi
-
-      - name: Setup PNPM Store Config
-        run: pnpm config set store-dir "$PNPM_CACHE_FOLDER"
-
-      - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Debug Cache Directory
-        run: |
-          echo "Contents of PNPM Cache Directory:"
-          ls -la "$PNPM_CACHE_FOLDER"  # Verify the cache directory contents
+      # Step 4: Configure pnpm to use the custom cache directory
+      - name: Setup pnpm config
+        run: pnpm config set store-dir $PNPM_CACHE_FOLDER
 
       - name: List Node Modules
         run: |
