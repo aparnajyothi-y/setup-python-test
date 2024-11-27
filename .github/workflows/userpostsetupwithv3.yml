@@ -25,6 +25,23 @@ jobs:
           node-version: '18'
           cache: 'pnpm'  # This will handle pnpm caching automatically
 
+      - name: Verify PNPM Cache Directory
+        run: |
+          if [ ! -d "/home/runner/setup-pnpm/node_modules/.bin/store/v3" ]; then
+            echo "PNPM cache directory does not exist, creating it."
+            mkdir -p /home/runner/setup-pnpm/node_modules/.bin/store/v3
+          else
+            echo "PNPM cache directory exists."
+          fi
+      - name: Check for pnpm-lock.yaml
+        run: |
+          if [ ! -f "pnpm-lock.yaml" ]; then
+            echo "pnpm-lock.yaml file is missing in the repository."
+            exit 1
+          else
+            echo "pnpm-lock.yaml file found."
+          fi
+
       # Step 4: Configure pnpm to use the custom cache directory
       - name: Setup pnpm config
         run: pnpm config set store-dir $PNPM_CACHE_FOLDER
