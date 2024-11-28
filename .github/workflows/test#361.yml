@@ -7,11 +7,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Set action path
-        run: echo "action_path=$(node -p 'require(\"path\").relative(process.env.GITHUB_WORKSPACE, \"${{ github.action_path }}\")')" >> $GITHUB_ENV
-        shell: bash
+      
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
          python-version: '3.10'
-         cache-dependency-path: ${{ env.action_path }}/requirements.txt
+         cache-dependency-path: ${{ github.action_path }}/requirements.txt
