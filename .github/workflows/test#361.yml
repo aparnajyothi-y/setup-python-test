@@ -8,5 +8,5 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Set up Node.js
-        uses: aparnajyothi-y/setup-python-test@main
+        uses: actions/setup-python@v5
         
