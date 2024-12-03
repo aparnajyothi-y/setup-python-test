@@ -21,6 +21,5 @@ jobs:
       - name: Install Homebrew and dependencies
         run: |
           /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-          brew install bzip2 readline ncurses
 
       - run: python -c 'import readline'
