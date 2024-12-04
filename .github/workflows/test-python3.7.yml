@@ -24,3 +24,4 @@ jobs:
             brew install readline ncurses
       - run: python -c 'import readline'
       - run: python -c 'import bzip2'
+      - run: python -c 'import ncurses'
