@@ -1,53 +1,23 @@
-name: User Post Setup Tests with v3
+name: CI Workflow with pnpm path
+
 on:
-  workflow_dispatch:
-
-env:
-  PNPM_CACHE_FOLDER: .cache/pnpm
-
+  workflow_dispatch :
 jobs:
-  publish_container:
+  build:
     runs-on: ubuntu-latest
+    
     steps:
-      # Step 1: Checkout the repository code
-      - name: Check out repository code
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      # Step 2: Install pnpm
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-       
-      - name: Verify PNPM Cache Directory
-        run: |
-          if [ ! -d "/home/runner/setup-pnpm/node_modules/.bin/store/v3" ]; then
-            echo "PNPM cache directory does not exist, creating it."
-            mkdir -p /home/runner/setup-pnpm/node_modules/.bin/store/v3
-          else
-            echo "PNPM cache directory exists."
-          fi
-          
-      # Step 3: Set up Node.js and cache pnpm store
-      - name: Setup Node.js and cache pnpm store
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'pnpm'  
+    - name: Set up Node.js with pnpm
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'  # Specify the Node.js version you need
+        cache: 'pnpm'
 
-      
-      - name: Check for pnpm-lock.yaml
-        run: |
-          if [ ! -f "pnpm-lock.yaml" ]; then
-            echo "pnpm-lock.yaml file is missing in the repository."
-            exit 1
-          else
-            echo "pnpm-lock.yaml file found."
-          fi
+    - name: Set pnpm store path
+      run: pnpm config set store-dir ${{ github.workspace }}/.pnpm-store
 
-      # Step 4: Configure pnpm to use the custom cache directory
-      - name: Setup pnpm config
-        run: pnpm config set store-dir $PNPM_CACHE_FOLDER
-
-      - name: List Node Modules
-        run: |
-          echo "Contents of Node Modules Directory:"
-          ls -la node_modules  # Check the node_modules structure
+    - name: Install dependencies with pnpm
+      run: pnpm install
