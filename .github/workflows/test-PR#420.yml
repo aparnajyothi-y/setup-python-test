@@ -25,7 +25,7 @@ jobs:
       # # Test SyntaxError (to simulate error handling for syntax issues)
       - name: Test SyntaxError
         run: |
-          echo "print('Hello world'" > syntax_error.py
+          echo "print('Hello world'") > syntax_error.py
           python syntax_error.py
 
       # Test IndexError (to simulate index out-of-bounds error)
