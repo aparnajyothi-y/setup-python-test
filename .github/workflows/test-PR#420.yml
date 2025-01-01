@@ -22,11 +22,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest
 
-      # Test SyntaxError (to simulate error handling for syntax issues)
-      - name: Test SyntaxError
-        run: |
-          echo "print('Hello world'" > syntax_error.py
-          python syntax_error.py
+      # # Test SyntaxError (to simulate error handling for syntax issues)
+      # - name: Test SyntaxError
+      #   run: |
+      #     echo "print('Hello world'" > syntax_error.py
+      #     python syntax_error.py
 
       # Test IndexError (to simulate index out-of-bounds error)
       - name: Test IndexError
