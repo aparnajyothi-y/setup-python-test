@@ -41,11 +41,11 @@ jobs:
       #     echo "int('abc')" > value_error.py
       #     python value_error.py
 
-      # Test NameError (to simulate use of an undefined variable)
-      - name: Test NameError
-        run: |
-          echo "print(undefined_var)" > name_error.py
-          python name_error.py
+      # # Test NameError (to simulate use of an undefined variable)
+      # - name: Test NameError
+      #   run: |
+      #     echo "print(undefined_var)" > name_error.py
+      #     python name_error.py
 
       # Test Custom Error Handling (to simulate custom raise-based errors)
       - name: Test Custom Exception
