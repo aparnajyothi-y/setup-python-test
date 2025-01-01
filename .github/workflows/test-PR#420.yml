@@ -13,7 +13,7 @@ jobs:
 
       # Set up Python environment using the latest setup-python version (you can use @v5 or the PR version)
       - name: Set up Python 3.10
-        uses: eric-wieser/setup-python@patch-1
+        uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
@@ -23,35 +23,35 @@ jobs:
           pip install pytest
 
       # # Test SyntaxError (to simulate error handling for syntax issues)
-      # - name: Test SyntaxError
-      #   run: |
-      #     echo "print('Hello world'" > syntax_error.py
-      #     python syntax_error.py
+      - name: Test SyntaxError
+        run: |
+          echo "print('Hello world'" > syntax_error.py
+          python syntax_error.py
 
       # Test IndexError (to simulate index out-of-bounds error)
-      # - name: Test IndexError
-      #   run: |
-      #     echo "my_list = [1, 2, 3]" > index_error.py
-      #     echo "print(my_list[5])" >> index_error.py
-      #     python index_error.py
+      - name: Test IndexError
+        run: |
+          echo "my_list = [1, 2, 3]" > index_error.py
+          echo "print(my_list[5])" >> index_error.py
+          python index_error.py
 
       # Test ValueError (to simulate invalid value passed to a function)
-      # - name: Test ValueError
-      #   run: |
-      #     echo "int('abc')" > value_error.py
-      #     python value_error.py
+      - name: Test ValueError
+        run: |
+          echo "int('abc')" > value_error.py
+          python value_error.py
 
       # # Test NameError (to simulate use of an undefined variable)
-      # - name: Test NameError
-      #   run: |
-      #     echo "print(undefined_var)" > name_error.py
-      #     python name_error.py
+      - name: Test NameError
+        run: |
+          echo "print(undefined_var)" > name_error.py
+          python name_error.py
 
       # Test Custom Error Handling (to simulate custom raise-based errors)
-      # - name: Test Custom Exception
-      #   run: |
-      #     echo "raise Exception('Custom error message')" > custom_error.py
-      #     python custom_error.py
+      - name: Test Custom Exception
+        run: |
+          echo "raise Exception('Custom error message')" > custom_error.py
+          python custom_error.py
 
       # Check for problem matcher output (this verifies if the matcher is picking up the errors)
       - name: Check logs for problem matcher output
