@@ -29,11 +29,11 @@ jobs:
       #     python syntax_error.py
 
       # Test IndexError (to simulate index out-of-bounds error)
-      - name: Test IndexError
-        run: |
-          echo "my_list = [1, 2, 3]" > index_error.py
-          echo "print(my_list[5])" >> index_error.py
-          python index_error.py
+      # - name: Test IndexError
+      #   run: |
+      #     echo "my_list = [1, 2, 3]" > index_error.py
+      #     echo "print(my_list[5])" >> index_error.py
+      #     python index_error.py
 
       # Test ValueError (to simulate invalid value passed to a function)
       - name: Test ValueError
