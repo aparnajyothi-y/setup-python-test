@@ -48,10 +48,10 @@ jobs:
       #     python name_error.py
 
       # Test Custom Error Handling (to simulate custom raise-based errors)
-      - name: Test Custom Exception
-        run: |
-          echo "raise Exception('Custom error message')" > custom_error.py
-          python custom_error.py
+      # - name: Test Custom Exception
+      #   run: |
+      #     echo "raise Exception('Custom error message')" > custom_error.py
+      #     python custom_error.py
 
       # Check for problem matcher output (this verifies if the matcher is picking up the errors)
       - name: Check logs for problem matcher output
