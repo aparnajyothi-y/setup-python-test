@@ -10,35 +10,20 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      # Step 1: Checkout code (for testing purposes, we can assume it's a Python project)
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Set up Python 3.10 (match the customer's environment)
       - name: Set up Python 3.10
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
           architecture: 'x86'
-
-      # Step 3: Check Python and pip versions to ensure correct environment
-      - name: Check Python and pip version
+      
+      - name: Install pyinstaller with --user flag
         run: |
-          python --version
-          pip --version
+          pip install pyinstaller --user
 
-      # Step 4: Upgrade setuptools and wheel (mimicking the customer setup)
-      - name: Upgrade setuptools and wheel
-        run: |
-          pip install --upgrade setuptools>=74 wheel
-
-      # Step 5: Install pywin32 with --user flag to replicate customer behavior
-      - name: Install pywin32 with --user flag
-        run: |
-          pip install pywin32 --user
-
-      # Step 6: Check if the warning appears (this step is a placeholder for debugging)
       - name: Verify installation
         run: |
-          pip show pywin32
-          python -c "import win32api; print('pywin32 import successful')"
+          pyinstaller --version
+          echo $Env:PATH
