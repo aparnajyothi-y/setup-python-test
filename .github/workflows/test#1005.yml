@@ -1,0 +1,33 @@
+name: Reproduce Script Location Warning
+
+on:
+  workflow_dispatch:
+
+jobs:
+  install_and_check:
+    runs-on: windows-latest
+    
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      # Step 2: Set up Python
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      # Step 3: Install pywin32 (or any other library that installs console scripts)
+      - name: Install pywin32
+        run: |
+          python -m pip install --upgrade pip
+          pip install pywin32
+
+      # Step 4: List the contents of the Python Scripts directory to see where scripts were installed
+      - name: List contents of Scripts directory
+        run: dir C:\Users\runneradmin\AppData\Roaming\Python\Python310-32\Scripts
+     
+      # Step 5: Show installed packages
+      - name: Show installed packages
+        run: pip show pywin32
