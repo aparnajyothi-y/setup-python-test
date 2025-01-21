@@ -22,6 +22,7 @@ jobs:
       - name: Install pyinstaller with --user flag
         run: |
           pip install pyinstaller --user
+          pip install pywin32 --user
 
       - name: Verify installation
         run: |
