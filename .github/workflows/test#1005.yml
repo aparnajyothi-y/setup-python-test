@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python 3.10
         uses: aparnajyothi-y/setup-python@user-scripts-path
         with:
-          python-version: '3.10'
+          python-version: '3.9'
           architecture: 'x86'
       
       - name: Install pyinstaller with --user flag
