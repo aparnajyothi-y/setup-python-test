@@ -21,7 +21,7 @@ jobs:
       
       - name: Install pyinstaller with --user flag
         run: |
-          pip install pyinstaller
+          pip install pyinstaller --user
         
 
       - name: Verify installation
