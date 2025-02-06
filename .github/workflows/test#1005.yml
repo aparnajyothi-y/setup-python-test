@@ -1,4 +1,4 @@
-name: Path update
+name: Path update for >=3.10
 on:
   push:
     branches:
