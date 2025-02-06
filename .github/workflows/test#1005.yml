@@ -1,8 +1,6 @@
 name: Path update for >=3.10
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   install_and_check:
