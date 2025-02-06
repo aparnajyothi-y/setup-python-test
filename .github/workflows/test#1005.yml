@@ -1,5 +1,4 @@
-name: Reproduce Script Location Warning
-
+name: Path update
 on:
   push:
     branches:
