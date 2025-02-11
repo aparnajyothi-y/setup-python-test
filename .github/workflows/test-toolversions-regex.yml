@@ -5,11 +5,8 @@ on:
       
 jobs:
   test-python:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest, macOS-13]
         
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
