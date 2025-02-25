@@ -16,6 +16,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Ensure correct permissions for /Users/runner/hostedtoolcache
         run: |
+          sudo mkdir -p /Users/runner/hostedtoolcache
           sudo chown gowri:staff /Users/runner/hostedtoolcache
       - name: Set up Python
         uses: actions/setup-python@v5
