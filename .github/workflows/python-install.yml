@@ -10,6 +10,10 @@ jobs:
   
          
     steps:
+      - name: Ensure correct permissions for /Users/runner/hostedtoolcache
+        run: |
+          sudo chown -R runner-user:runner-group /Users/runner/hostedtoolcache
+
       - name: Check out repository
         uses: actions/checkout@v4
 
