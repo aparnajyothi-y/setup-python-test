@@ -6,12 +6,8 @@ on:
 
 jobs:
   test-v5:
-    runs-on: macos-14.2.1
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version:
-          - '3.9'
+    runs-on: self-hosted
+  
          
     steps:
       - name: Check out repository
@@ -20,30 +16,8 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
-          check-latest: true
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-
-  test-v4:
-    runs-on: macos-14.2.1
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version:
-          - '3.9'
-         
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-          check-latest: true
+          python-version: 3.11.6
+    
 
       - name: Install dependencies
         run: |
