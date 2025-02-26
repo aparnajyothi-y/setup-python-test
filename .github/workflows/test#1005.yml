@@ -13,7 +13,7 @@ jobs:
       - name: Set up Python 3.10
         uses: aparnajyothi-y/setup-python@update-installer-path
         with:
-          python-version: '3.11'
+          python-version: '3.13.1t'
           architecture: 'x64'
       
       - name: Install pyinstaller with --user flag
