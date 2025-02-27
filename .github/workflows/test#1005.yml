@@ -11,10 +11,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python 3.10
-        uses: aparnajyothi-y/setup-python@update-install-path
+        uses: aparnajyothi-y/setup-python@update-install-path-freethreaded
         with:
           python-version: '3.14.0-alpha.5'
           architecture: 'x64'
+          freethreaded: true
       
       - name: Install pyinstaller with --user flag
         run: |
