@@ -1,22 +1,27 @@
-name: Python Test
+name: Python Architecture Test
 
-on: 
-
- workflow_dispatch:
+on:
+  workflow_dispatch:
 
 jobs:
-  setup-python:
-    runs-on : macos-latest
-
+  test-architecture:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        python-version: [3.10, 3.11, 3.12]  
+        architecture: [universal2, arm64, x64]    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-    - name: Set up Python 3.x
+    - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.13.0-alpha - 3.13.0' 
-        
-    - name: Check Python version
-      run: python --version 
+        python-version: ${{ matrix.python-version }}
+        architecture: ${{ matrix.architecture }}  # Select architecture based on the matrix
+
+    - name: Check Python architecture
+      run: |
+        echo "Python version: $(python --version)"
+        echo "Python architecture: $(python -c 'import platform; print(platform.machine())')"
    
