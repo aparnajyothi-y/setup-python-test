@@ -5,8 +5,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Install poetry
-      run: pipx install poetry
     - uses: actions/checkout@v4
     - uses: actions/setup-python@v5
       with:
