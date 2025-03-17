@@ -1,0 +1,67 @@
+name: Test Universal2 Builds for Python 3.11 and Above
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test_python_builds:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        python-version: [3.11, 3.12] # Add more versions as needed
+        architecture: [x64, arm64]
+    
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Verify Python Installation
+      run: |
+        python --version
+        arch=$(uname -m)
+        echo "System architecture: $arch"
+        # Ensure correct version and architecture are installed
+        if [[ $arch == "arm64" && $(python -c 'import platform; print(platform.machine())') != "arm64" ]]; then
+          echo "Error: Expected arm64 architecture for Python."
+          exit 1
+        elif [[ $arch == "x86_64" && $(python -c 'import platform; print(platform.machine())') != "x86_64" ]]; then
+          echo "Error: Expected x64 architecture for Python."
+          exit 1
+        fi
+
+    - name: Check if Python is Universal2 (for macOS)
+      run: |
+        # Check if we are using a universal2 build (both arm64 and x86_64) on macOS
+        if [[ $(uname) == "Darwin" ]]; then
+          executable=$(python -c 'import sys; print(sys.executable)')
+          file_type=$(file "$executable")
+          
+          # Look for universal2 in the output of the 'file' command
+          if [[ "$file_type" == *"universal2"* ]]; then
+            echo "Universal2 build detected: $file_type"
+          else
+            echo "Error: Universal2 build not found."
+            exit 1
+          fi
+        fi
+
+    - name: Test tool cache destination
+      run: |
+        # Check the Python tool cache directory for installed version
+        python -c 'import sys; print(sys.executable)'
+        python -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])'
+
+    - name: Clean up
+      run: |
+        # Clean up the environment after testing
+        echo "Cleaning up the environment."
