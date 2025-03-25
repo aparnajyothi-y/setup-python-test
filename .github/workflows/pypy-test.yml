@@ -6,12 +6,20 @@ on:
 jobs:
   test-python:
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Setup Python
+      # Step 1: Check out the code repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set up PyPy 2.7 on ARM64 architecture
+      - name: Set up PyPy 2.7
         uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
-          check-latest: false
+          python-version: "pypy-2.7"
+          architecture: arm64  # Ensures ARM64 architecture is used
+
+      # Step 3: Verify the PyPy setup (Optional)
+      - name: Verify PyPy version
+        run: |
+          pypy --version
