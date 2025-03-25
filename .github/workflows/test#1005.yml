@@ -15,7 +15,7 @@ jobs:
         # uses: actions/setup-python@v5
         with:
           python-version: '3.14.0-alpha.5'
-          architecture: 'x86'
+          architecture: 'x64'
           freethreaded: true
       
       - name: Install pyinstaller with --user flag
