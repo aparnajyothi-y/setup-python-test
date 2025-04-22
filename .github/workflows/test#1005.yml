@@ -10,11 +10,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.11
+      - name: Set up Python 3.13.1t
         uses: aparnajyothi-y/setup-python@update-install-path
         # uses: actions/setup-python@v5
         with:
-          python-version: 3.12
+          python-version: 3.13.1t
           
       - name: Install pyinstaller with --user flag
         run: |
