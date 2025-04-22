@@ -14,10 +14,9 @@ jobs:
         uses: aparnajyothi-y/setup-python@update-install-path
         # uses: actions/setup-python@v5
         with:
-          python-version: '3.13.1'
+          python-version: '3.9'
           architecture: 'x64'
-          freethreaded: true
-      
+          
       - name: Install pyinstaller with --user flag
         run: |
           pip install pyinstaller --user
