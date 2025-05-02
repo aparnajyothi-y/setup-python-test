@@ -16,6 +16,7 @@ jobs:
         with:
           python-version: '3.13.1'
           freethreaded: true
+          architecture : 'x86'
           
           
       - name: Install pyinstaller with --user flag
