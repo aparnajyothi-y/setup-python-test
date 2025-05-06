@@ -1,64 +1,41 @@
-name: Debug Python Toolcache Setup
+name: Diagnose Python Setup Differences
 
 on:
   workflow_dispatch:
 
 jobs:
-  test-python-setup:
+  analyze-python-setup:
     runs-on: windows-latest
-
-    strategy:
-      matrix:
-        label: [stable, experimental]
-        include:
-          - label: stable
-            python-version: '3.11.9'
-            architecture: 'x64'
-          - label: experimental
-            python-version: '3.13.1-freethreaded'
-            architecture: 'x64'
-
-    name: Test ${{ matrix.label }} setup-python
     steps:
-      - name: Print Environment Info
-        run: |
-          echo "AGENT_TOOLSDIRECTORY: $env:AGENT_TOOLSDIRECTORY"
-          echo "RUNNER_TOOL_CACHE: $env:RUNNER_TOOL_CACHE"
-          echo "TEMP: $env:TEMP"
-
-      - name: Check Toolcache Before setup-python
-        run: |
-          $ToolCache = $env:AGENT_TOOLSDIRECTORY
-          if ([string]::IsNullOrEmpty($ToolCache)) {
-            $ToolCache = $env:RUNNER_TOOL_CACHE
-          }
-          Write-Host "Listing toolcache contents for Python:"
-          Get-ChildItem -Path "$ToolCache\Python" -Recurse | ForEach-Object { $_.FullName }
-
-      - name: Setup Python (${{ matrix.label }})
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
-          architecture: ${{ matrix.architecture }}
+          python-version: '3.11.9'
 
-      - name: Inspect Python Location & Symlinks
+      - name: Locate Python install path
+        id: find-python-path
         run: |
-          $PythonPath = Get-Command python | Select-Object -ExpandProperty Source
-          Write-Host "Resolved Python path: $PythonPath"
-          Write-Host "Listing contents of Python directory:"
-          Get-ChildItem -Path (Split-Path $PythonPath) -Recurse
+          $pyPath = (Get-Command python).Source
+          Write-Host "Python executable path: $pyPath"
+          $pythonRoot = Split-Path -Parent $pyPath
+          echo "PYTHON_ROOT=$pythonRoot" >> $env:GITHUB_ENV
 
-      - name: Test Python and Pip Functionality
+      - name: List all files under Python install path
         run: |
-          python --version
-          python -m ensurepip
-          python -m pip install --upgrade pip
-          python -m pip list
+          Write-Host "Files under $env:PYTHON_ROOT"
+          $files = Get-ChildItem -Path $env:PYTHON_ROOT -Recurse -Force | 
+                   Select-Object FullName, Attributes, Length, LastWriteTime
+          $files | Format-Table -AutoSize
+          echo "File Count: $($files.Count)"
+          
+      - name: Dump file paths to artifact
+        run: |
+          $files = Get-ChildItem -Path $env:PYTHON_ROOT -Recurse -Force
+          $fileList = $files | Select-Object FullName
+          $fileList | Out-File -FilePath "$env:GITHUB_WORKSPACE\filelist.txt"
 
-      - name: List Toolcache Again (Post-setup-python)
-        run: |
-          $ToolCache = $env:AGENT_TOOLSDIRECTORY
-          if ([string]::IsNullOrEmpty($ToolCache)) {
-            $ToolCache = $env:RUNNER_TOOL_CACHE
-          }
-          Get-ChildItem -Path "$ToolCache\Python" -Recurse | ForEach-Object { $_.FullName }
+      - name: Upload file list artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-filelist-3.11.9
+          path: filelist.txt
