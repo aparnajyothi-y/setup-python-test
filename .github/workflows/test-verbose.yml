@@ -1,0 +1,64 @@
+name: Debug Python Toolcache Setup
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-python-setup:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        label: [stable, experimental]
+        include:
+          - label: stable
+            python-version: '3.11.9'
+            architecture: 'x64'
+          - label: experimental
+            python-version: '3.13.1-freethreaded'
+            architecture: 'x64'
+
+    name: Test ${{ matrix.label }} setup-python
+    steps:
+      - name: Print Environment Info
+        run: |
+          echo "AGENT_TOOLSDIRECTORY: $env:AGENT_TOOLSDIRECTORY"
+          echo "RUNNER_TOOL_CACHE: $env:RUNNER_TOOL_CACHE"
+          echo "TEMP: $env:TEMP"
+
+      - name: Check Toolcache Before setup-python
+        run: |
+          $ToolCache = $env:AGENT_TOOLSDIRECTORY
+          if ([string]::IsNullOrEmpty($ToolCache)) {
+            $ToolCache = $env:RUNNER_TOOL_CACHE
+          }
+          Write-Host "Listing toolcache contents for Python:"
+          Get-ChildItem -Path "$ToolCache\Python" -Recurse | ForEach-Object { $_.FullName }
+
+      - name: Setup Python (${{ matrix.label }})
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: ${{ matrix.architecture }}
+
+      - name: Inspect Python Location & Symlinks
+        run: |
+          $PythonPath = Get-Command python | Select-Object -ExpandProperty Source
+          Write-Host "Resolved Python path: $PythonPath"
+          Write-Host "Listing contents of Python directory:"
+          Get-ChildItem -Path (Split-Path $PythonPath) -Recurse
+
+      - name: Test Python and Pip Functionality
+        run: |
+          python --version
+          python -m ensurepip
+          python -m pip install --upgrade pip
+          python -m pip list
+
+      - name: List Toolcache Again (Post-setup-python)
+        run: |
+          $ToolCache = $env:AGENT_TOOLSDIRECTORY
+          if ([string]::IsNullOrEmpty($ToolCache)) {
+            $ToolCache = $env:RUNNER_TOOL_CACHE
+          }
+          Get-ChildItem -Path "$ToolCache\Python" -Recurse | ForEach-Object { $_.FullName }
