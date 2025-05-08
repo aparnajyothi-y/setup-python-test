@@ -14,7 +14,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v4  # Upgraded to v4
       with:
-        node-version: '16'  # You can change the version to any required one (e.g., '14', '18')
+        node-version: '2o'  # You can change the version to any required one (e.g., '14', '18')
 
     - name: Install Dependencies
       run: |
