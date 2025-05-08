@@ -1,0 +1,24 @@
+name: Node Setup Test with Cache
+
+on:
+  workflow_dispatch :
+
+jobs:
+  setup-node:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v4  # Using the latest version of actions/checkout
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4  # Upgraded to v4
+      with:
+        node-version: '16'  # You can change the version to any required one (e.g., '14', '18')
+
+    - name: Install Dependencies
+      run: |
+        npm install  # Install npm dependencies
+
+    - name: Verify Node.js Version
+      run: node -v  # Check Node.js
