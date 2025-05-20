@@ -30,7 +30,7 @@ jobs:
           path: venv
           key: >-
             ${{ runner.os }}-${{ runner.arch }}-${{ steps.python.outputs.python-version
-            }}-${{ hashFiles('pyproject.toml', 'requirements_test.txt') }}
+            }}-${{ hashFiles('pyproject.toml') }}
       - name: Create Python venv
         if: steps.cache-venv.outputs.cache-hit != 'true'
         run: |
