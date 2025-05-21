@@ -30,4 +30,16 @@ jobs:
           path: venv
           key: >-
             ${{ runner.os }}-${{ runner.arch }}-${{ steps.python.outputs.python-version
-            }}-${{ hashFiles('pyproject.toml') }}
+            }}-${{ hashFiles('pyproject.toml', 'requirements.txt') }}
+      - name: Create Python venv
+        if: steps.cache-venv.outputs.cache-hit != 'true'
+        run: |
+          python -m venv venv
+          . venv/bin/activate
+          pip install -r requirements.txt
+          pip install .
+      - name: Run pytest
+        run: |
+          . venv/bin/activate
+          pip install . --no-deps
+          pytest tests/
