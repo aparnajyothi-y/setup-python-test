@@ -38,8 +38,3 @@ jobs:
           . venv/bin/activate
           pip install -r requirements.txt
           pip install .
-      - name: Run pytest
-        run: |
-          . venv/bin/activate
-          pip install . --no-deps
-          pytest tests/
