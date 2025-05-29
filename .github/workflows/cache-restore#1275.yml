@@ -1,29 +1,52 @@
-name: Restore Cache on macOS
+name: Reproduce Cache and pip Index Issue
+
 on:
   workflow_dispatch:
 
 jobs:
-  restore-cache:
-    runs-on: self-hosted
+  setup-python:
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        runner: [macos-latest, self-hosted]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Debug runner environment
+        run: |
+          echo "Runner: ${{ runner.os }} / ${{ matrix.runner }}"
+          echo "Python3_ROOT_DIR: $Python3_ROOT_DIR"
+          echo "Toolcache path:"
+          find /Users/runner/hostedtoolcache || true
+          find /home/azureuser/actions-runner/_work/_tool || true
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
-      - name: Try restoring incompatible cache
+      - name: Print Python paths
+        run: |
+          which python
+          python --version
+          echo "Python3_ROOT_DIR: $Python3_ROOT_DIR"
+
+      - name: Restore Python cache
         uses: actions/cache@v4
         with:
           path: |
             ~/.cache/pip
-            /Users/runner/work/_tool
-          key: shared-python-cache-Ubuntu-${{ hashFiles('requirements.txt') }}
+          key: shared-python-cache-${{ runner.os }}-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            shared-python-cache-${{ runner.os }}-
 
-      - name: Show toolcache path for debugging
+      - name: Install pip with fallback index
         run: |
-          echo "Toolcache path:"
-          find /Users/runner/work/_tool || echo "No toolcache found"
+          python -m pip install --upgrade pip
+        env:
+          PIP_INDEX_URL: https://pypi.org/simple
+
+      - name: Print pip version and exit
+        run: pip --version
