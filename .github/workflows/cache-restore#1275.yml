@@ -1,0 +1,29 @@
+name: Restore Cache on macOS
+on:
+  workflow_dispatch:
+
+jobs:
+  restore-cache:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Try restoring incompatible cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            /Users/runner/work/_tool
+          key: shared-python-cache-Ubuntu-${{ hashFiles('requirements.txt') }}
+
+      - name: Show toolcache path for debugging
+        run: |
+          echo "Toolcache path:"
+          find /Users/runner/work/_tool || echo "No toolcache found"
