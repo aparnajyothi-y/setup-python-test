@@ -1,33 +1,41 @@
-name: Reusable Workflow
+name: PNPM Cache Workflow
 
 on:
-  workflow_call:
-    
+  workflow_dispatch:
+  push:
+    branches: [main]
 
 jobs:
-  cache-job:
+  pnpm-cache-job:
     runs-on: self-hosted
 
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18.20.4'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.20.4
+          cache: 'pnpm'
 
-    - name: Install pnpm
-      run: npm install -g pnpm
+      - name: Get PNPM store path
+        id: pnpm-store
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
-    - name: Get Node.js version
-      id: node
-      run: echo "version=$(node --version | sed 's/^v//')" >> "$GITHUB_OUTPUT"
+      - name: Restore PNPM cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: pnpm-store-${{ runner.os }}-18.20.4-v1
 
-    - name: Cache PNPM store
-      uses: actions/cache@v4
-      with:
-       path: ~/.pnpm-store
-       key: pnpm-store-${{ runner.os }}-${{ steps.node.outputs.version }}-v1
+      - name: Install dependencies
+        run: pnpm install
 
-    - name: Show PNPM store path
-      run: pnpm store path --silent
+      - name: Save PNPM cache
+        uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: pnpm-store-${{ runner.os }}-18.20.4-v1
