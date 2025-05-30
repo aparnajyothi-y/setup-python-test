@@ -1,0 +1,33 @@
+name: reusable-node-cache
+
+on:
+  workflow_call:
+
+jobs:
+  reuse-cache-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Setup pnpm
+        run: npm install -g pnpm
+
+      - name: Print store path
+        run: pnpm store path
+
+      - name: Restore Node cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            ~/.pnpm-store
+            /opt/hostedtoolcache
+            /home/ec2-user/_work/_tool
+          key: node-cache-${{ runner.os }}-${{ hashFiles('**/requirements.txt') }}
