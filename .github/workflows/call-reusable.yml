@@ -30,7 +30,7 @@ jobs:
           key: pnpm-store-${{ runner.os }}-18.20.4-v1
 
       - name: Install dependencies
-      - run: pnpm install --no-strict-peer-dependencies --ignore-script
+        run: pnpm install --no-strict-peer-dependencies --ignore-script
 
       - name: Save PNPM cache
         uses: actions/cache/save@v4
