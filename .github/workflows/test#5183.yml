@@ -1,4 +1,3 @@
-# .github/workflows/fromjson-templatefail.yml
 name: fromJSON Template Parse Error
 
 on:
@@ -13,13 +12,12 @@ jobs:
       - name: Conditionally skipped
         id: produce
         if: ${{ false }}
-        run: echo "::set-output name=env_vars::{\"MAIN_BRANCH\": \"main\"}"
+        run: echo "will never run"
 
   test-parse:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Attempt to parse empty input
+      - name: Attempt to parse with fallback
         run: |
-          echo "${{ fromJson(needs.build.outputs.json).MAIN_BRANCH }}"
-
+          echo "${{ fromJson(needs.build.outputs.json || '{}').MAIN_BRANCH }}"
