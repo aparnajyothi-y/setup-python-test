@@ -1,0 +1,25 @@
+# .github/workflows/fromjson-error.yml
+name: fromJSON Error Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  producer:
+    runs-on: ubuntu-latest
+    outputs:
+      json: ${{ steps.generate.outputs.env_vars }}
+    steps:
+      - name: Skipped Step
+        id: generate
+        if: ${{ false }}  # Simulate conditional skip
+        run: echo "::set-output name=env_vars::{\"MAIN_BRANCH\":\"main\"}"
+
+  consumer:
+    runs-on: ubuntu-latest
+    needs: producer
+    steps:
+      - name: Attempt to Parse
+        run: |
+          echo "Parsing JSON..."
+          echo "${{ fromJson(needs.producer.outputs.json).MAIN_BRANCH }}"
