@@ -1,25 +1,23 @@
-# .github/workflows/fromjson-error.yml
-name: fromJSON Error Demo
+# .github/workflows/fromjson-templatefail.yml
+name: fromJSON Template Parse Error
 
 on:
   workflow_dispatch:
 
 jobs:
-  producer:
+  build:
     runs-on: ubuntu-latest
     outputs:
-      json: ${{ steps.generate.outputs.env_vars }}
+      json: ${{ steps.produce.outputs.env_vars }}
     steps:
-      - name: Skipped Step
-        id: generate
-        if: ${{ false }}  # Simulate conditional skip
-        run: echo "::set-output name=env_vars::{\"MAIN_BRANCH\":\"main\"}"
+      - name: Conditionally skipped
+        id: produce
+        if: ${{ false }}
+        run: echo "::set-output name=env_vars::{\"MAIN_BRANCH\": \"main\"}"
 
-  consumer:
+  test-parse:
+    needs: build
     runs-on: ubuntu-latest
-    needs: producer
     steps:
-      - name: Attempt to Parse
-        run: |
-          echo "Parsing JSON..."
-          echo "${{ fromJson(needs.producer.outputs.json).MAIN_BRANCH }}"
+      - name: Attempt to parse empty input
+        run: echo "${{ fromJson(needs.build.outputs.json).MAIN_BRANCH }}"
