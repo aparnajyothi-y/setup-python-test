@@ -1,23 +1,29 @@
-name: fromJSON Template Parse Error
+name: Reproduce fromJson Empty Input Error
 
 on:
   workflow_dispatch:
+    inputs:
+      trigger_error:
+        type: boolean
+        default: true
+        description: "Set to true to skip the JSON-producing step and trigger the error"
 
 jobs:
-  build:
+  generate-json:
     runs-on: ubuntu-latest
     outputs:
-      json: ${{ steps.produce.outputs.env_vars }}
+      json: ${{ steps.set-json.outputs.json }}
     steps:
-      - name: Conditionally skipped
-        id: produce
-        if: ${{ false }}
-        run: echo "will never run"
+      - name: Conditionally produce JSON
+        id: set-json
+        if: ${{ github.event.inputs.trigger_error == 'false' }}
+        run: |
+          echo "json={\"MAIN_BRANCH\": \"main\"}" >> $GITHUB_OUTPUT
 
-  test-parse:
-    needs: build
+  consume-json:
+    needs: generate-json
     runs-on: ubuntu-latest
     steps:
-      - name: Attempt to parse with fallback
+      - name: Parse JSON output
         run: |
-          echo "${{ fromJson(needs.build.outputs.json || '{}').MAIN_BRANCH }}"
+          echo "MAIN_BRANCH is: ${{ fromJson(needs.generate-json.outputs.json).MAIN_BRANCH }}"
