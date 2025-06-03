@@ -20,4 +20,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Attempt to parse empty input
-        run: echo "${{ fromJson(needs.build.outputs.json).MAIN_BRANCH }}"
+        run: |
+          echo "${{ fromJson(needs.build.outputs.json).MAIN_BRANCH }}"
+
