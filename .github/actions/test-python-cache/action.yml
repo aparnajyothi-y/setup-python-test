@@ -10,7 +10,7 @@ runs:
       shell: bash
 
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: aparnajyothi-y/setup-python@Feature-request#476
       with:
         python-version: '3.10'
         cache: pip
