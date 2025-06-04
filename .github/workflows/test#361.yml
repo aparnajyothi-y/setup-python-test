@@ -1,4 +1,4 @@
-name: Composite Cache Test
+name: Composite Action Test
 
 on:
   workflow_dispatch:
@@ -6,9 +6,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Run composite action
+      - name: Run local composite action
         uses: ./.github/actions/test-python-cache
