@@ -20,3 +20,6 @@ jobs:
 
       - name: Print pip cache location
         run: pip cache dir
+      - name: Install dependencies
+        run: pip install -r requirements/required.txt
+
