@@ -11,20 +11,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set action_path to simulate non-root project
-        run: |
-          echo "action_path=requirements" >> $GITHUB_ENV
-        # Replace 'subdir' with the relative path to your actual project folder
-
-      - name: Print resolved action_path
-        run: echo "Resolved action path is:${{ env.action_path }}"
-
       - name: Set up Python with cache
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
           cache: pip
-          cache-dependency-path: ${{ env.action_path }}/required-test.txt
+          cache-dependency-path: requirements/required-test.txt
 
       - name: Print pip cache location
         run: pip cache dir
