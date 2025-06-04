@@ -13,7 +13,7 @@ jobs:
 
       - name: Set up Python with cache
         # uses: actions/setup-python@v5
-        uses: aparnajyothi-y/setup-python@Feature-request#476
+        uses: aparnajyothi-y/setup-python@test-relativepath
         with:
           python-version: '3.10'
           cache: pip
