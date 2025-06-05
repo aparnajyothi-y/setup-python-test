@@ -14,8 +14,8 @@ jobs:
         uses: aparnajyothi-y/setup-python@update-install-path-freethreaded
         # uses: actions/setup-python@v5
         with:
-          python-version: '3.13.1'
-          architecture : 'arm64-freethreaded'
+          python-version: '3.13.1t'
+          architecture : 'arm64'
           # freethreaded: true
           
         
