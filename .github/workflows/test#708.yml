@@ -9,9 +9,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Set up Python
-        uses: priya-kinthali/setup-python@708-pr-test-agent
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.10.14'
-          architecture : 'x64'
+          python-version: '3.14.0-beta.1'
+          architecture : 'x64-freethreaded'
       - name: Check Python version
         run: python --version
