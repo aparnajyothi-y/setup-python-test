@@ -1,22 +1,24 @@
-name: test python3.7
+name: test python 3.13.4 on Windows
+
 on:
- workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
- testjob:
+  testjob:
     strategy:
       matrix:
-        os: [macos-12]
+        os: [windows-latest]
         
     runs-on: ${{ matrix.os }}
     
     steps:
-      
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
-            python-version: 3.7.17
-            check-latest: false
-            architecture: 'x64'
-     
-      - run: python -c 'import _tkinter'
+          python-version: 3.13.4
+          check-latest: false
+          architecture: 'x64'
+
+      - name: Install psutil
+        run: pip install psutil
