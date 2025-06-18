@@ -4,22 +4,18 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-python:
-    runs-on: macos-latest
-    
+   test_python_location:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        python-version: [3.11, pypy3.11]
     steps:
-      # Step 1: Check out the code repository
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      # Step 2: Set up PyPy 2.7 on ARM64 architecture
-      - name: Set up PyPy 2.7
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5.6.0
         with:
-          python-version: "pypy-2.7"
-          architecture: arm64  # Ensures ARM64 architecture is used
-
-      # Step 3: Verify the PyPy setup (Optional)
-      - name: Verify PyPy version
-        run: |
-          pypy --version
+          python-version: ${{ matrix.python-version }}
+      - run: ls -al "$pythonLocation"
+        shell: bash
+      - run: |
+          "$pythonLocation/python" -V
+        shell: bash
