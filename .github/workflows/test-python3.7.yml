@@ -1,18 +1,29 @@
-name: Reproduce Python 3.13.4 Free-threaded Issue
+name: Check Py_GIL_DISABLED
 
 on:
   workflow_dispatch:
 
 jobs:
-  testjob:
+  verify-python-build:
     runs-on: windows-11-arm
-    steps:
-      - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.13.4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.13.4
 
-     
-      - name: Force source build of psutil
-        run: pip install psutil
+      - name: Check Py_GIL_DISABLED via sysconfig
+        run: |
+          python -c "import sysconfig; print('Py_GIL_DISABLED from sysconfig:', sysconfig.get_config_var('Py_GIL_DISABLED'))"
+
+      - name: Locate and dump pyconfig.h
+        shell: pwsh
+        run: |
+          $pythonRoot = (python -c "import sys; print(sys.exec_prefix)").Trim()
+          $headerPath = Join-Path $pythonRoot "include\pyconfig.h"
+          Write-Host "`n--- Snippet from pyconfig.h ---"
+          Get-Content $headerPath | Select-String -Pattern "Py_GIL_DISABLED" | ForEach-Object { Write-Host $_ }
