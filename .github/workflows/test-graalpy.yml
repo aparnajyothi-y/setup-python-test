@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["graalpy-3.10.9", "graalpy-3.11.6"] # Use available versions
+        python-version: ["graalpy-3.10", "graalpy-3.11"] # Use available versions
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
