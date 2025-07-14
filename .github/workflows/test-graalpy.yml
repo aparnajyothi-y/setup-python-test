@@ -22,7 +22,8 @@ jobs:
           check-latest: true
 
       - name: Show resolved version
-        run: echo "Resolved Python version: ${{ steps.python.outputs.python-version }}"
+        run: 'echo "Resolved Python version: ${{ steps.python.outputs.python-version }}"'
+
 
       - name: Check Python version
         run: python --version
