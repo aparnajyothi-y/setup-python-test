@@ -4,9 +4,9 @@
   "description": "A brief description of your project",
   "main": "index.js",
   "scripts": {
-    "test": "jest", 
-    "build": "tsc", 
-    "start": "node index.js" 
+    "test": "jest",
+    "build": "tsc",
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "Your Name",
@@ -18,7 +18,5 @@
   "devDependencies": {
     "jest": "^27.0.6",
     "eslint": "^7.32.0"
-  },
-  
- 
+  }
 }
