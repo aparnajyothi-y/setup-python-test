@@ -10,26 +10,13 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
-      - name: Setup Node 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Confirm Node version
-        run: |
-          echo "Node version:"
-          node -v
-          echo "npm version:"
-          npm -v
-
       - name: Use PR branch of setup-python
         uses: salmanmkc/setup-python@node24
         with:
           python-version: 3.12
 
-      - name: Confirm Python version
-        run: python --version
+      - name: npm i
+        run: npm install
       - name: Confirm Node version
         run: |
           echo "Node version:"
