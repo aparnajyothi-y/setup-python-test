@@ -24,7 +24,7 @@ jobs:
           npm -v
 
       - name: Use PR branch of setup-python
-        uses: salmanmk/setup-python@node24
+        uses: salmanmkc/setup-python@node24
         with:
           python-version: 3.12
 
