@@ -1,4 +1,4 @@
-name: test cache error message
+name: test cache error to warning
 
 on:
  workflow_dispatch:
@@ -10,9 +10,9 @@ jobs:
     
     steps:
       - uses: actions/checkout@v4
-      - uses: aparnajyothi-y/setup-python@update-error-message 
+      - uses: aparnajyothi-y/setup-python@update-error-warning#436
         with:
-          python-version: '3.7'
+          python-version: '3.12'
           architecture: x64
           cache: "pip"
 
@@ -24,9 +24,9 @@ jobs:
      
      steps:
        - uses: actions/checkout@v4
-       - uses: aparnajyothi-y/setup-python@update-error-message  
+       - uses: aparnajyothi-y/setup-python@update-error-warning#436  
          with:
-           python-version: '3.7'
+           python-version: '3.12'
            architecture: x64
            cache: "pipenv"
       
@@ -37,9 +37,9 @@ jobs:
      
      steps:
        - uses: actions/checkout@v4
-       - uses: aparnajyothi-y/setup-python@update-error-message 
+       - uses: aparnajyothi-y/setup-python@update-error-warning#436
          with:
-           python-version: '3.7'
+           python-version: '3.12'
            architecture: x64
            cache: "poetry"
 
