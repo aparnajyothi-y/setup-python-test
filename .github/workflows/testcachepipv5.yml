@@ -10,7 +10,8 @@ jobs:
     
     steps:
       - uses: actions/checkout@v4
-      - uses: aparnajyothi-y/setup-python@update-error-warning#436
+      # - uses: aparnajyothi-y/setup-python@update-error-warning#436
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
           architecture: x64
@@ -24,7 +25,8 @@ jobs:
      
      steps:
        - uses: actions/checkout@v4
-       - uses: aparnajyothi-y/setup-python@update-error-warning#436  
+       # - uses: aparnajyothi-y/setup-python@update-error-warning#436  
+       - uses: actions/setup-python@v5
          with:
            python-version: '3.12'
            architecture: x64
@@ -37,7 +39,8 @@ jobs:
      
      steps:
        - uses: actions/checkout@v4
-       - uses: aparnajyothi-y/setup-python@update-error-warning#436
+       # - uses: aparnajyothi-y/setup-python@update-error-warning#436
+       - uses: actions/setup-python@v5
          with:
            python-version: '3.12'
            architecture: x64
