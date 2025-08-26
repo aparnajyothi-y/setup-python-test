@@ -1,50 +1,32 @@
-name: cache test
+name: Reproduce pnpm cache issue
 
 on:
   workflow_dispatch:
-    inputs:
-      runner-os:
-        description: 'Runner OS (e.g. ubuntu-latest, macos-latest, self-hosted)'
-        required: true
-        type: string
-      python-version:
-        description: 'Python version (e.g. 3.11)'
-        required: true
-        type: string
-      cache-key-prefix:
-        description: 'Cache key prefix'
-        required: true
-        type: string
 
 jobs:
-  cache-test:
-    runs-on: ${{ github.event.inputs.runner-os }}
-
+  test:
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      # First setup-node (without cache)
+      - name: Setup Node.js (no cache)
+        uses: actions/setup-node@v4
         with:
-          python-version: ${{ github.event.inputs.python-version }}
+          node-version: 20
 
-      - name: Print toolcache path
-        run: |
-          echo "Toolcache path:"
-          find /opt/hostedtoolcache || true
-          find /Users/runner/hostedtoolcache || true
-          find /home/azureuser/actions-runner/_work/_tool || true
+      # Install pnpm
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
 
-      - name: Cache Python toolcache and pip
-        uses: actions/cache@v4
+      # Second setup-node with cache enabled
+      - name: Setup Node.js (with pnpm cache)
+        uses: actions/setup-node@v4
         with:
-          path: |
-            ~/.cache/pip
-            /opt/hostedtoolcache
-            /Users/runner/hostedtoolcache
-            /home/azureuser/actions-runner/_work/_tool
-          key: ${{ github.event.inputs.cache-key-prefix }}-${{ hashFiles('requirements.txt') }}
+          node-version: 20
+          cache: 'pnpm'
 
-      - name: Install pip package
-        run: pip install requests
+      # Try to install deps
+      - name: Install dependencies
+        run: pnpm i
+        shell: bash
