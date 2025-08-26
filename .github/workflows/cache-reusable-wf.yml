@@ -11,6 +11,8 @@ jobs:
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
+        with:
+         version: 10.9.0
 
       # Second setup-node with cache enabled
       - name: Setup Node.js (with pnpm cache)
