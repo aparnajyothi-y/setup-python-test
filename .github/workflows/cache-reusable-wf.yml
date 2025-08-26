@@ -7,17 +7,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      # First setup-node (without cache)
-      - name: Setup Node.js (no cache)
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      # Install pnpm
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v5
 
       # Second setup-node with cache enabled
       - name: Setup Node.js (with pnpm cache)
