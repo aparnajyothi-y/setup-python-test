@@ -21,7 +21,7 @@ jobs:
           node-version: 20
           # cache: 'pnpm'
 
-      # Try to install deps
-      - name: Install dependencies
-        run: pnpm i
-        shell: bash
+      # # Try to install deps
+      # - name: Install dependencies
+      #   run: pnpm i
+      #   shell: bash
