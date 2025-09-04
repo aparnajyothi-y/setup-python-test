@@ -1,46 +1,50 @@
-name: Debug Poetry Sync on Python 3.13
+name: Python 3.13 Poetry Debug
 
 on:
   workflow_dispatch:
 
 jobs:
-  reproduce-poetry-sync-delay:
-    name: Reproduce Poetry Sync Delay on Py 3.13
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  test:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        python-version: ['3.12', '3.13']
 
-      - name: Set up Python 3.13
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          lfs: true
+          submodules: true
+
+      - name: Initialize LFS
+        run: git lfs pull
+
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
-          python-version: 3.13
+          python-version: ${{ matrix.python-version }}
+          cache: pip
 
-      - name: Install Poetry
+      - name: Show Python info
         run: |
-         curl -sSL https://install.python-poetry.org | python3 -
-         echo "PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
-         poetry --version  # Confirm installation succeeded
-
-      - name: Create isolated venv
-        run: |
-          python -m venv .venv
-          source .venv/bin/activate
-
-      - name: Install dependencies (poetry sync)
-        run: |
-          time poetry sync
-        shell: bash
-
-      - name: Debug info
-        if: failure()
-        run: |
-          echo "== Poetry version =="
-          poetry --version
-          echo "== Python version =="
           python --version
-          echo "== Installed packages =="
-          pip list
-          echo "== Diagnostics: disk, memory =="
-          df -h
-          free -m
+          which python
+          pip --version
+
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y libopenblas-dev
+
+      - name: Install dependencies (timed + verbose)
+        run: |
+          set -x
+          time python -m pip install --upgrade pip setuptools wheel
+          time pip install -U tox tox-gh-actions poetry -v
+
+      - name: Poetry diagnostics
+        run: |
+          poetry --version
+          time poetry install -vvv || echo "Poetry install failed"
+
+      - name: Run tox
+        run: time tox -vvv
