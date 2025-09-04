@@ -1,82 +1,37 @@
-name: Python 3.13 Poetry Debug
+name: test-python3-config
 
 on:
   workflow_dispatch:
 
 jobs:
-  test:
-    runs-on: ubuntu-22.04
+  check-python3-config:
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: ['3.12', '3.13']
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ['3.9', '3.10', '3.11', '3.12']
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-        with:
-          lfs: true
-          submodules: true
+      - uses: actions/checkout@v4
 
-      - name: Initialize LFS
-        run: git lfs pull
-
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache: pip
 
-      - name: Cache Poetry and Pip
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/pypoetry
-            ~/.cache/pip
-          key: poetry-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Show Python info
+      - name: Check python3-config presence
         run: |
+          echo "Python version:"
           python --version
-          which python
-          pip --version
-          pip debug --verbose
+          echo "Where is python3-config?"
+          which python3-config || echo "python3-config not found"
+          echo "Try running python3-config --embed (if available):"
+          python3-config --embed || echo "Not available"
+        shell: bash
+        if: runner.os != 'Windows'
 
-      - name: Install system dependencies
-        run: sudo apt-get update && sudo apt-get install -y libopenblas-dev
-
-      - name: Install dependencies (timed + verbose)
+      - name: Windows fallback check
         run: |
-          set -x
-          echo "=== Start pip installs ==="
-          date
-          time python -m pip install --upgrade pip setuptools wheel
-          time pip install -U tox tox-gh-actions poetry -v
-          echo "=== End pip installs ==="
-          date
-
-      - name: Poetry diagnostics (lock + install with pip debug)
-        run: |
-          poetry --version
-          echo "=== Start poetry lock ==="
-          date
-          time poetry lock -vvv || echo "Poetry lock failed"
-          echo "=== End poetry lock ==="
-          date
-
-          echo "=== Start poetry install ==="
-          date
-          # Add pip verbose + no cache to show whether it builds from sdist
-          PIP_VERBOSE=3 PIP_NO_CACHE_DIR=off time poetry install -vvv || echo "Poetry install failed"
-          echo "=== End poetry install ==="
-          date
-
-      - name: Show installed packages
-        run: pip list --format=columns
-
-      - name: Run tox with verbose logs
-        run: |
-          echo "=== Start tox ==="
-          date
-          time tox -vvv
-          echo "=== End tox ==="
-          date
+          echo "On Windows, check for python3-config:"
+          where python3-config || echo "python3-config not found"
+        if: runner.os == 'Windows'
