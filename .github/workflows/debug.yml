@@ -39,6 +39,7 @@ jobs:
           python --version
           which python
           pip --version
+          pip debug --verbose
 
       - name: Install system dependencies
         run: sudo apt-get update && sudo apt-get install -y libopenblas-dev
@@ -53,7 +54,7 @@ jobs:
           echo "=== End pip installs ==="
           date
 
-      - name: Poetry diagnostics (lock + install)
+      - name: Poetry diagnostics (lock + install with pip debug)
         run: |
           poetry --version
           echo "=== Start poetry lock ==="
@@ -64,7 +65,8 @@ jobs:
 
           echo "=== Start poetry install ==="
           date
-          time poetry install -vvv || echo "Poetry install failed"
+          # Add pip verbose + no cache to show whether it builds from sdist
+          PIP_VERBOSE=3 PIP_NO_CACHE_DIR=off time poetry install -vvv || echo "Poetry install failed"
           echo "=== End poetry install ==="
           date
 
