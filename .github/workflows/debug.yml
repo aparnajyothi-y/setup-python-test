@@ -26,6 +26,14 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
 
+      - name: Cache Poetry and Pip
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pypoetry
+            ~/.cache/pip
+          key: poetry-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
       - name: Show Python info
         run: |
           python --version
@@ -38,13 +46,35 @@ jobs:
       - name: Install dependencies (timed + verbose)
         run: |
           set -x
+          echo "=== Start pip installs ==="
+          date
           time python -m pip install --upgrade pip setuptools wheel
           time pip install -U tox tox-gh-actions poetry -v
+          echo "=== End pip installs ==="
+          date
 
-      - name: Poetry diagnostics
+      - name: Poetry diagnostics (lock + install)
         run: |
           poetry --version
-          time poetry install -vvv || echo "Poetry install failed"
+          echo "=== Start poetry lock ==="
+          date
+          time poetry lock -vvv || echo "Poetry lock failed"
+          echo "=== End poetry lock ==="
+          date
 
-      - name: Run tox
-        run: time tox -vvv
+          echo "=== Start poetry install ==="
+          date
+          time poetry install -vvv || echo "Poetry install failed"
+          echo "=== End poetry install ==="
+          date
+
+      - name: Show installed packages
+        run: pip list --format=columns
+
+      - name: Run tox with verbose logs
+        run: |
+          echo "=== Start tox ==="
+          date
+          time tox -vvv
+          echo "=== End tox ==="
+          date
