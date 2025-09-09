@@ -1,37 +1,47 @@
-name: test-python3-config
+name: Validate python3-config availability
 
 on:
   workflow_dispatch:
 
 jobs:
-  check-python3-config:
-    runs-on: ${{ matrix.os }}
+  test:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ['3.9', '3.10', '3.11', '3.12']
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+    runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Setup Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Check python3-config presence
+      - name: Show Python info
         run: |
-          echo "Python version:"
           python --version
-          echo "Where is python3-config?"
-          which python3-config || echo "python3-config not found"
-          echo "Try running python3-config --embed (if available):"
-          python3-config --embed || echo "Not available"
-        shell: bash
-        if: runner.os != 'Windows'
+          which python || where python
+          pip --version
 
-      - name: Windows fallback check
+      - name: Check python3-config
         run: |
-          echo "On Windows, check for python3-config:"
-          where python3-config || echo "python3-config not found"
-        if: runner.os == 'Windows'
+          echo "Checking python3-config availability..."
+          which python3-config || where python3-config || echo "python3-config not found"
+
+      - name: Compare with pkg-config python3-embed
+        run: |
+          echo "Checking pkg-config python3-embed..."
+          pkg-config --exists python3-embed && pkg-config --cflags --libs python3-embed || echo "python3-embed.pc not found"
+
+      - name: Python sysconfig fallback
+        run: |
+          echo "=== Python sysconfig output ==="
+          python - <<'EOF'
+          import sysconfig
+          print("LDFLAGS:", sysconfig.get_config_var("LDFLAGS"))
+          print("CFLAGS:", sysconfig.get_config_var("CFLAGS"))
+          EOF
