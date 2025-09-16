@@ -6,7 +6,7 @@ on:
 jobs:
    test-pypy:
     name: "Test PyPy ${{ matrix.python-version }}"
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     strategy:
       matrix:
         python-version: ["pypy-3.10", "pypy-3.12-v7.x"]
