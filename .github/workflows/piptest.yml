@@ -11,11 +11,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5 
+
+      - name: Remove WindowsApps from PATH
+        if: runner.os == 'Windows'
+        run: |
+          echo "PATH=${PATH//C:\\Users\\runneradmin\\AppData\\Local\\Microsoft\\WindowsApps;}" >> $env:GITHUB_ENV
+
       - name: Set up python
         uses: gowridurgad/setup-python@pip-install
         with:
-      
-            python-version:  '3.11'
-            cache: pip
-            cache-dependency-path: requirements.txt 
-            # pip-install: -r requirements.txt
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: requirements.txt 
+          pip-install: -r requirements.txt
