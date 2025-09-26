@@ -18,7 +18,7 @@ jobs:
           echo "PATH=${PATH//C:\\Users\\runneradmin\\AppData\\Local\\Microsoft\\WindowsApps;}" >> $env:GITHUB_ENV
 
       - name: Set up python
-        uses: gowridurgad/setup-python@pip-install
+        uses: aparnajyothi-y/setup-python@test-punycode-warning-suppress
         with:
           python-version: '3.11'
           cache: pip
