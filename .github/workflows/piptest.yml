@@ -3,16 +3,10 @@ name: Repro pip root warning
 on: workflow_dispatch
 
 jobs:
-  repro:
+  python-root-warning:
     runs-on: self-hosted
     steps:
-      - name: Check who the runner user is
-        run: whoami
-
-      - name: Run ensurepip as root via sudo
-        run: sudo /usr/bin/python3 -m ensurepip
-
-      - name: Setup python using actions/setup-python (may internally call ensurepip)
+      - name: Setup Python 3.13
         uses: actions/setup-python@v6
         with:
           python-version: '3.13'
