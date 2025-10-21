@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ['graalpy23.1', 'graalpy24.1']
+        python-version: ['graalpy23.1.0-a.1', 'graalpy24.1.0-ea.9']
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
