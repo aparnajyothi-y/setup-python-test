@@ -20,7 +20,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           allow-prereleases : true
-          archtecture : amd64
+          architecture : amd64
 
       - name: Validate Python installation
         run: |
