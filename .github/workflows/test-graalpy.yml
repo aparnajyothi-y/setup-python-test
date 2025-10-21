@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ['3.13.0b4', '3.13.0rc1', '3.14.0a1']
+        python-version: ['3.14.0-rc.3']
 
     steps:
       - name: Checkout repository
