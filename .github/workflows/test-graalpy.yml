@@ -10,15 +10,16 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ['graalpy23.1.0-a.1', 'graalpy24.1.0-ea.9']
+        python-version: ['graalpy26.0.0-ea.13', 'graalpy24.1.0-ea.9']
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Setup Python with GraalPy EA version
-         # uses: timfel/setup-python@tim/graalpy-windows-ea
-        uses: actions/setup-python@v6
+        uses: timfel/setup-python@tim/graalpy-windows-ea
+        # uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
+          allow-prereleases : true
 
       - name: Validate Python installation
         run: |
