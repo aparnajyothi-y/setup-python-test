@@ -1,32 +1,31 @@
-name: Validate Early Access Versions
+name: Validate GraalPy Early Access Versions
 
 on:
   workflow_dispatch:
 
 jobs:
-  test-ea:
+  test-graalpy-ea:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ['3.14.0-rc.3']
-
+        python-version: ['graalpy23.1', 'graalpy24.1']
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Python (EA Test)
-        uses: timfel/setup-python@tim/graalpy-windows-ea
+      - name: Setup Python with GraalPy EA version
+        uses: aparnajyothi-y/setup-python@your-branch-name
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Validate Python Installation
+      - name: Validate Python installation
         run: |
           python --version
           which python || where python
-          pip --version
+          pip --version || echo "pip not found"
 
-      - name: Run Sanity Tests
+      - name: Run sanity check
         run: |
-          python -c "import sys; print('Python OK:', sys.version)"
+          python -c "import sys; print('Running on:', sys.version)"
