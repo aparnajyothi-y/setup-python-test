@@ -16,7 +16,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python with GraalPy EA version
-        uses: timfel/setup-python@tim/graalpy-windows-ea
+        # uses: timfel/setup-python@tim/graalpy-windows-ea
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
