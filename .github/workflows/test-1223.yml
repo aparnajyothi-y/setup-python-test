@@ -1,0 +1,34 @@
+name: Reproduce socket.getfqdn slowness
+
+on: [workflow_dispatch]
+
+jobs:
+  test-fqdn:
+    runs-on: macos-15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python using setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run fqdn timing test
+        run: |
+          python - <<'EOF'
+          import socket, time
+
+          def measure(label, func):
+              start = time.monotonic()
+              func()
+              elapsed = time.monotonic() - start
+              print(f"{label}: {elapsed:.2f}s")
+
+          print("Testing socket.getfqdn() performance on macOS runner...")
+          measure("127.0.0.1", lambda: socket.getfqdn("127.0.0.1"))
+          measure("localhost", lambda: socket.getfqdn("localhost"))
+          measure("localhost.", lambda: socket.getfqdn("localhost."))
+          measure("localhost.localdomain", lambda: socket.getfqdn("localhost.localdomain"))
+          measure("localhost.localdomain.", lambda: socket.getfqdn("localhost.localdomain."))
+          EOF
