@@ -15,9 +15,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # -----------------------------------------
-      # 1️⃣ Setup Python via setup-python
-      # -----------------------------------------
       - name: Setup Python (3.12)
         uses: actions/setup-python@v5
         with:
@@ -40,9 +37,6 @@ jobs:
               measure(host, lambda h=host: socket.getfqdn(h))
           EOF
 
-      # -----------------------------------------
-      # 2️⃣ Workaround: skip slow reverse lookup
-      # -----------------------------------------
       - name: Run FQDN timing test with workaround
         id: workaround_test
         run: |
@@ -61,76 +55,3 @@ jobs:
           for host in ["127.0.0.1", "localhost", "localhost.", "localhost.localdomain"]:
               measure(host, lambda h=host: socket.getfqdn(h))
           EOF
-
-      # -----------------------------------------
-      # 3️⃣ Preinstalled macOS Python
-      # -----------------------------------------
-      - name: Run FQDN timing test (preinstalled Python)
-        id: preinstalled_test
-        run: |
-          echo "=== Testing preinstalled macOS Python on $RUNNER_OS ==="
-          (command -v /usr/local/bin/python3 && /usr/local/bin/python3 -V) || (command -v /usr/bin/python3 && /usr/bin/python3 -V)
-          (command -v /usr/local/bin/python3 && /usr/local/bin/python3) - <<'EOF' || (command -v /usr/bin/python3 && /usr/bin/python3) - <<'EOF'
-          import socket, time
-          print("Testing socket.getfqdn() performance (preinstalled)...")
-
-          def measure(label, func):
-              start = time.monotonic()
-              func()
-              print(f"{label}: {time.monotonic() - start:.2f}s")
-
-          for host in ["127.0.0.1", "localhost", "localhost.", "localhost.localdomain"]:
-              measure(host, lambda h=host: socket.getfqdn(h))
-          EOF
-
-      # -----------------------------------------
-      # 4️⃣ Install and test with uv-installed Python
-      # -----------------------------------------
-      - name: Install uv
-        run: |
-          curl -LsSf https://astral.sh/uv/install.sh | sh
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Install Python via uv
-        run: uv python install 3.12
-
-      - name: Run FQDN timing test (uv-installed Python)
-        id: uv_test
-        run: |
-          echo "=== Testing uv-installed Python on $RUNNER_OS ==="
-          uv run python - <<'EOF' | tee uv_output.txt
-          import socket, time
-          print("Testing socket.getfqdn() performance (uv)...")
-
-          def measure(label, func):
-              start = time.monotonic()
-              func()
-              print(f"{label}: {time.monotonic() - start:.2f}s")
-
-          for host in ["127.0.0.1", "localhost", "localhost.", "localhost.localdomain"]:
-              measure(host, lambda h=host: socket.getfqdn(h))
-          EOF
-
-      # -----------------------------------------
-      # 5️⃣ Diagnostics
-      # -----------------------------------------
-      - name: Log resolver and network configuration
-        run: |
-          echo "===== /etc/hosts ====="
-          cat /etc/hosts || true
-          echo "===== DNS Configuration ====="
-          scutil --dns | grep "nameserver" || true
-
-      # -----------------------------------------
-      # 6️⃣ Publish summary
-      # -----------------------------------------
-      - name: Generate timing summary
-        run: |
-          echo "### FQDN Timing Summary for $RUNNER_OS" >> $GITHUB_STEP_SUMMARY
-          echo "| Method | File | Example Output |" >> $GITHUB_STEP_SUMMARY
-          echo "|--------|------|----------------|" >> $GITHUB_STEP_SUMMARY
-          for file in setup_output.txt workaround_output.txt preinstalled_output.txt uv_output.txt; do
-            if [ -f "$file" ]; then
-              echo "| ${file%_output.txt} | $file | \`$(grep 127.0.0.1 $file | head -1)\` |" >> $GITHUB_STEP_SUMMARY
-            fi
-          done
