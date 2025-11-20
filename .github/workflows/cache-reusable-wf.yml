@@ -16,7 +16,7 @@ jobs:
 
       # Second setup-node with cache enabled
       - name: Setup Node.js (with pnpm cache)
-        uses: actions/setup-java@v6
+        uses: actions/setup-java@v4
         with:
           java-version: latest
           # cache: 'pnpm'
