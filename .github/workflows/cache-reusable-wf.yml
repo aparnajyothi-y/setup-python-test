@@ -16,9 +16,9 @@ jobs:
 
       # Second setup-node with cache enabled
       - name: Setup Node.js (with pnpm cache)
-        uses: actions/setup-node@master
+        uses: actions/setup-python@v6
         with:
-          node-version: 20
+          python-version: latest
           # cache: 'pnpm'
 
       # # Try to install deps
