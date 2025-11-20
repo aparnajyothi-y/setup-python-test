@@ -18,6 +18,7 @@ jobs:
       - name: Setup Node.js (with pnpm cache)
         uses: actions/setup-java@v5
         with:
+          distribution : microsoft
           java-version: latest
           # cache: 'pnpm'
 
