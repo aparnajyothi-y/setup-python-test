@@ -1,4 +1,4 @@
-name: python-macos14-test
+name: python-win-11-arm64
 
 on:
   workflow_dispatch:
@@ -12,8 +12,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest]
-        python-version: [3.7, 3.8, 3.9, 3.10]
+        os: [windows-11-arm]
+        python-version: [3.12.10,3.13.5,3.13.7]
         
         
     steps:
