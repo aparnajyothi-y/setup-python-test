@@ -13,14 +13,14 @@ jobs:
     strategy:
       matrix:
         os: [windows-11-arm]
-        python-version: [3.12.10,3.13.5,3.13.7]
+        python-version: [3.12.10,3.12.9,3.13.4,3.13.5,3.13.7]
         
         
     steps:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          architecture: 'x64'
+          architecture: 'arm64'
         
           
     
