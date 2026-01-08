@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-11-arm]
-        python-version: [3.12.9,3.13.7}]
+        python-version: [3.12.9,3.13.7]
 
     steps:
       - uses: actions/checkout@v6
