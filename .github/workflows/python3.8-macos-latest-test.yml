@@ -2,32 +2,28 @@ name: Python Artifact Setup
 
 on:
   workflow_dispatch:
-    inputs:
-      python-version:
-        description: "Python version to setup"
-        default: "3.12.10"
 
 jobs:
   setup-python:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest, windows-11-arm]
-        python-version: [${{ github.event.inputs.python-version }}]
+        os: [windows-11-arm]
+        python-version: [3.12.9,3.13.7]
 
     steps:
       - uses: actions/checkout@v6
 
-      - name: Set up Python
-        if: !(runner.os == 'Windows' && matrix.os == 'windows-11-arm' && startsWith(matrix.python-version, '3.12'))
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-          architecture: ${{ runner.arch }}
+      # - name: Set up Python
+      #   if: !(runner.os == 'Windows' && matrix.os == 'windows-11-arm' && startsWith(matrix.python-version, '3.12'))
+      #   uses: actions/setup-python@v5
+      #   with:
+      #     python-version: ${{ matrix.python-version }}
+      #     architecture: ${{ runner.arch }}
 
       # Manual workaround for Windows ARM64 non-cached versions
       - name: Download and setup Python manually on Win-11-ARM
-        if: runner.os == 'Windows' && matrix.os == 'windows-11-arm' && startsWith(matrix.python-version, '3.12')
+      
         run: |
           $PYTHON_VERSION = "${{ matrix.python-version }}"
           $PYTHON_ZIP_URL = "https://www.python.org/ftp/python/$PYTHON_VERSION/python-$PYTHON_VERSION-arm64.zip"
