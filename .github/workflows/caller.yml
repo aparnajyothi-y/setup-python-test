@@ -1,9 +1,34 @@
-name: call reusable workflow
+name: Install and Verify Python 3.12.7 arm64
 
 on:
   workflow_dispatch:
 
 jobs:
-  call-cache-reuse:
-    uses: ./.github/workflows/call-reusable.yml
-    secrets: inherit
+  python-embedded:
+    runs-on: windows-11-arm
+    steps:
+      - name: Download Python Embedded Distribution
+        run: |
+          curl -LO https://www.python.org/ftp/python/3.12.7/python-3.12.7-arm64.zip
+          dir
+
+      - name: Extract Python Embedded
+        shell: pwsh
+        run: |
+          $zip = "python-3.12.7-arm64.zip"
+          $target = "$PWD\python312-embed"
+          Expand-Archive -Path $zip -DestinationPath $target
+          Write-Host "Extracted to: $target"
+          dir $target
+
+      - name: Check Python Embedded
+        shell: pwsh
+        run: |
+          $pythonExe = "$PWD\python312-embed\python.exe"
+          if (Test-Path $pythonExe) {
+            Write-Host "Python executable found at $pythonExe"
+            & $pythonExe --version
+          } else {
+            Write-Error "Embedded Python not found."
+            exit 1
+          }
