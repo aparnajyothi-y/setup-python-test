@@ -12,10 +12,9 @@ jobs:
         shell: pwsh
         run: |
           echo "=== Runner metadata ==="
-          echo "OS              : $env:RUNNER_OS"
-          echo "Arch            : $env:RUNNER_ARCH"
-          echo "ImageVersion    : $env:ImageVersion"
-          echo ""
+          echo "OS           : $env:RUNNER_OS"
+          echo "Arch         : $env:RUNNER_ARCH"
+          echo "ImageVersion : $env:ImageVersion"
           systeminfo | Select-String "OS Version"
 
       - name: Inspect preinstalled Python (before setup-python)
@@ -24,20 +23,12 @@ jobs:
           echo "=== Python on PATH ==="
           where python || echo "python not on PATH"
           python --version || echo "python not runnable"
-          echo ""
 
-          echo "=== Hosted toolcache ==="
+          echo "`n=== Hosted toolcache ==="
           Get-ChildItem "C:\hostedtoolcache\windows\Python" -ErrorAction SilentlyContinue
-          echo ""
 
-          echo "=== Program Files ==="
+          echo "`n=== Program Files ==="
           Get-ChildItem "C:\Program Files\Python*" -ErrorAction SilentlyContinue
-
-      - name: Show registry Python entries (sanity check)
-        shell: pwsh
-        run: |
-          echo "=== Python registry entries ==="
-          Get-ChildItem HKLM:\Software\Python -Recurse -ErrorAction SilentlyContinue
 
       - name: Setup Python 3.14 (GIL build)
         uses: actions/setup-python@v6
@@ -50,14 +41,9 @@ jobs:
         run: |
           echo "=== After setup-python 3.14 ==="
           python --version
-          python - <<'EOF'
-          import sys
-          print("Executable:", sys.executable)
-          print("Stdlib OK")
-          EOF
+          python -c "import sys; print('Executable:', sys.executable); print('Stdlib OK')"
 
       - name: Attempt setup-python 3.14t (expected to fail)
-        id: setup_314t
         continue-on-error: true
         uses: actions/setup-python@v6
         with:
@@ -70,9 +56,8 @@ jobs:
           echo "=== Python state after 3.14t attempt ==="
           where python || echo "python missing"
           python --version || echo "python not runnable"
-          echo ""
 
-          echo "=== Toolcache after failure ==="
+          echo "`n=== Toolcache after 3.14t attempt ==="
           Get-ChildItem "C:\hostedtoolcache\windows\Python" -ErrorAction SilentlyContinue
 
       - name: Test NuGet free-threaded Python (control test)
@@ -83,9 +68,4 @@ jobs:
 
           $py = Resolve-Path "nuget-python\pythonarm64-freethreaded.3.14.2\tools\python.exe"
           & $py --version
-
-          & $py - <<'EOF'
-          import sys, encodings
-          print("NuGet Python executable:", sys.executable)
-          print("encodings OK")
-          EOF
+          & $py -c "import sys, encodings; print('NuGet executable:', sys.executable); print('encodings OK')"
