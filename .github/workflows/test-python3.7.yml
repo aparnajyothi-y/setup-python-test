@@ -1,29 +1,91 @@
-name: Check Py_GIL_DISABLED
+name: Diagnose Python 3.14 / 3.14t on Windows ARM
 
 on:
   workflow_dispatch:
 
 jobs:
-  verify-python-build:
+  diagnose:
     runs-on: windows-11-arm
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python 3.13.4
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.13.4
-
-      - name: Check Py_GIL_DISABLED via sysconfig
-        run: |
-          python -c "import sysconfig; print('Py_GIL_DISABLED from sysconfig:', sysconfig.get_config_var('Py_GIL_DISABLED'))"
-
-      - name: Locate and dump pyconfig.h
+      - name: Runner + Image metadata
         shell: pwsh
         run: |
-          $pythonRoot = (python -c "import sys; print(sys.exec_prefix)").Trim()
-          $headerPath = Join-Path $pythonRoot "include\pyconfig.h"
-          Write-Host "`n--- Snippet from pyconfig.h ---"
-          Get-Content $headerPath | Select-String -Pattern "Py_GIL_DISABLED" | ForEach-Object { Write-Host $_ }
+          echo "=== Runner metadata ==="
+          echo "OS              : $env:RUNNER_OS"
+          echo "Arch            : $env:RUNNER_ARCH"
+          echo "ImageVersion    : $env:ImageVersion"
+          echo ""
+          systeminfo | Select-String "OS Version"
+
+      - name: Inspect preinstalled Python (before setup-python)
+        shell: pwsh
+        run: |
+          echo "=== Python on PATH ==="
+          where python || echo "python not on PATH"
+          python --version || echo "python not runnable"
+          echo ""
+
+          echo "=== Hosted toolcache ==="
+          Get-ChildItem "C:\hostedtoolcache\windows\Python" -ErrorAction SilentlyContinue
+          echo ""
+
+          echo "=== Program Files ==="
+          Get-ChildItem "C:\Program Files\Python*" -ErrorAction SilentlyContinue
+
+      - name: Show registry Python entries (sanity check)
+        shell: pwsh
+        run: |
+          echo "=== Python registry entries ==="
+          Get-ChildItem HKLM:\Software\Python -Recurse -ErrorAction SilentlyContinue
+
+      - name: Setup Python 3.14 (GIL build)
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+          architecture: arm64
+
+      - name: Verify Python 3.14 works
+        shell: pwsh
+        run: |
+          echo "=== After setup-python 3.14 ==="
+          python --version
+          python - <<'EOF'
+          import sys
+          print("Executable:", sys.executable)
+          print("Stdlib OK")
+          EOF
+
+      - name: Attempt setup-python 3.14t (expected to fail)
+        id: setup_314t
+        continue-on-error: true
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.14t"
+          architecture: arm64
+
+      - name: Inspect Python after 3.14t attempt
+        shell: pwsh
+        run: |
+          echo "=== Python state after 3.14t attempt ==="
+          where python || echo "python missing"
+          python --version || echo "python not runnable"
+          echo ""
+
+          echo "=== Toolcache after failure ==="
+          Get-ChildItem "C:\hostedtoolcache\windows\Python" -ErrorAction SilentlyContinue
+
+      - name: Test NuGet free-threaded Python (control test)
+        shell: pwsh
+        run: |
+          echo "=== Installing Python 3.14t via NuGet ==="
+          nuget install pythonarm64-freethreaded -Version 3.14.2 -OutputDirectory nuget-python
+
+          $py = Resolve-Path "nuget-python\pythonarm64-freethreaded.3.14.2\tools\python.exe"
+          & $py --version
+
+          & $py - <<'EOF'
+          import sys, encodings
+          print("NuGet Python executable:", sys.executable)
+          print("encodings OK")
+          EOF
